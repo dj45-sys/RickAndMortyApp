@@ -1,24 +1,95 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+// components
+import Navbar from "./Components/Navbar";
+import CharacterList from "./Components/CharacterList";
 
 function App() {
+  const [characters, setCharacters] = useState([]);
+  const [info, setInfo] = useState({});
+  /**
+   * const url for if you want change the api url
+   */
+  const url = "https://rickandmortyapi.com/api/character";
+  /**
+   * Go to fetch data from API
+   * @param {string} url
+   */
+  const fetchCharacters = (url) => {
+    axios()
+      .get(url)
+      .then((data) => {
+        setCharacters(data.data.results);
+        setInfo(data.data.info);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleNextPage = () => {
+    fetchCharacters(info.next);
+    window.scrollTo(0, 0);
+  };
+
+  const handlePreviousPage = () => {
+    fetchCharacters(info.prev);
+    window.scrollTo(0, 0);
+  };
+  /**
+   * useEffect for fetch data from API
+   */
+  useEffect(() => {
+    fetchCharacters(url);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar brand="Rick and Morty App" />
+      <div className="container py-5">
+        <nav>
+          <ul className="pagination justify-content-center">
+            {info.prev ? (
+              <li className="page-item">
+                <button className="page-link" onClick={handlePreviousPage}>
+                  Previous
+                </button>
+              </li>
+            ) : null}
+            {info.next ? (
+              <li className="page-item">
+                <button className="page-link" onClick={handleNextPage}>
+                  Next
+                </button>
+              </li>
+            ) : null}
+          </ul>
+        </nav>
+      </div>
+
+      <CharacterList characters={characters} />
+
+      <div className="container pb-5">
+        <nav>
+          <ul className="pagination justify-content-center">
+            {info.prev ? (
+              <li className="page-item">
+                <button className="page-link" onClick={handlePreviousPage}>
+                  Previous
+                </button>
+              </li>
+            ) : null}
+            {info.next ? (
+              <li className="page-item">
+                <button className="page-link" onClick={handleNextPage}>
+                  Next
+                </button>
+              </li>
+            ) : null}
+          </ul>
+        </nav>
+      </div>
+    </>
   );
 }
 
