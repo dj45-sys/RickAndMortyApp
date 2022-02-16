@@ -16,7 +16,7 @@ function App() {
    * @param {string} url
    */
   const fetchCharacters = (url) => {
-    axios()
+    axios
       .get(url)
       .then((data) => {
         setCharacters(data.data.results);
